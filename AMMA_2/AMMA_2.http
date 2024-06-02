@@ -1,0 +1,6 @@
+@AMMA_2_HostAddress = http://localhost:5261
+
+GET {{AMMA_2_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
