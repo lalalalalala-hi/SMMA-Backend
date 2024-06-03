@@ -33,8 +33,16 @@ namespace AMMAAPI.Controllers
 
             return Ok(new
             {
+                User = new
+                {
+                    user.UserId,
+                    user.Name,
+                    user.Email,
+                    user.ContactNumber,
+                    user.Role
+                },
                 Token = user.Token,
-                Message = "Login successfully!"
+                Message = "Login successfully!",
             });
         }
 
