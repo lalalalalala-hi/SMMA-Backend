@@ -9,6 +9,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseUrls("https://*:7103");
+
 // Add services to the container.
 builder.Services.Configure<AMMADatabaseSettings>(
     builder.Configuration.GetSection("AMMADatabase"));
