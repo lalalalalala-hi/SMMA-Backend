@@ -9,6 +9,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Set the URLs the application will listen on
+builder.WebHost.UseUrls("http://*:8080");
+
 // Add services to the container.
 builder.Services.Configure<AMMADatabaseSettings>(
     builder.Configuration.GetSection("AMMADatabase"));
