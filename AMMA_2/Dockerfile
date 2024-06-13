@@ -11,7 +11,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0-nanoserver-1809 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["AMMA_2/AMMA_2.csproj", "."]
+COPY ["AMMA_2.csproj", "."]
 RUN dotnet restore "./AMMA_2.csproj"
 COPY . .
 RUN dotnet build "./AMMA_2.csproj" -c %BUILD_CONFIGURATION% -o /app/build
