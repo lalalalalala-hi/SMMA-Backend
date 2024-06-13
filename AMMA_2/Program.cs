@@ -1,6 +1,7 @@
 using AMMAAPI.Database;
 using AMMAAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -67,7 +68,11 @@ builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
 });
 
 /*builder.Services.AddAuthentication();*/
-
+// Configure data protection
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(@"/var/dpkeys/"))
+    .SetApplicationName("AMMA_API")
+    .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
 
 var app = builder.Build();
 
