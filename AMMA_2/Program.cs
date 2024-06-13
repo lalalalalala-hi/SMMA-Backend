@@ -1,7 +1,6 @@
 using AMMAAPI.Database;
 using AMMAAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -9,9 +8,6 @@ using MongoDB.Driver;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Set the URLs the application will listen on
-builder.WebHost.UseUrls("http://*:8080");
 
 // Add services to the container.
 builder.Services.Configure<AMMADatabaseSettings>(
@@ -21,6 +17,8 @@ builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+/*    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+*/
 }).AddJwtBearer(x =>
 {
     x.SaveToken = true;
@@ -32,6 +30,7 @@ builder.Services.AddAuthentication(x =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])),
         ValidateIssuer = true,
         ValidateAudience = true,
+        /*ValidateLifetime = true,*/
         ValidateIssuerSigningKey = true,
         ClockSkew = TimeSpan.Zero
     };
@@ -55,7 +54,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll",
                builder => builder.AllowAnyOrigin()
                           .AllowAnyMethod()
-                          .AllowAnyHeader());
+                                     .AllowAnyHeader());
 });
 
 builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
@@ -64,11 +63,8 @@ builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
     return new MongoClient(settings.ConnectionString);
 });
 
-// Configure data protection
-builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo(@"/var/dpkeys/"))
-    .SetApplicationName("AMMA_API")
-    .SetDefaultKeyLifetime(TimeSpan.FromDays(90));
+/*builder.Services.AddAuthentication();*/
+
 
 var app = builder.Build();
 
@@ -79,8 +75,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Remove or comment out the HTTPS redirection
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
 
