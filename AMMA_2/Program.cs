@@ -21,8 +21,6 @@ builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-/*    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-*/
 }).AddJwtBearer(x =>
 {
     x.SaveToken = true;
@@ -34,7 +32,6 @@ builder.Services.AddAuthentication(x =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])),
         ValidateIssuer = true,
         ValidateAudience = true,
-        /*ValidateLifetime = true,*/
         ValidateIssuerSigningKey = true,
         ClockSkew = TimeSpan.Zero
     };
@@ -58,7 +55,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll",
                builder => builder.AllowAnyOrigin()
                           .AllowAnyMethod()
-                                     .AllowAnyHeader());
+                          .AllowAnyHeader());
 });
 
 builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
@@ -67,7 +64,6 @@ builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
     return new MongoClient(settings.ConnectionString);
 });
 
-/*builder.Services.AddAuthentication();*/
 // Configure data protection
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(@"/var/dpkeys/"))
@@ -83,7 +79,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Remove or comment out the HTTPS redirection
+// app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
 
