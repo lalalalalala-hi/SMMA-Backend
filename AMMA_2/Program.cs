@@ -9,7 +9,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("http://*:8080");
+builder.WebHost.UseUrls("https://*");
 
 // Add services to the container.
 builder.Services.Configure<AMMADatabaseSettings>(
@@ -77,7 +77,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-/*app.UseHttpsRedirection();*/
+app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
 
