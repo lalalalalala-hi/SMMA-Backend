@@ -9,7 +9,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("https://*");
+// builder.WebHost.UseUrls("https://*");
 
 // Add services to the container.
 builder.Services.Configure<AMMADatabaseSettings>(
@@ -46,6 +46,9 @@ builder.Services.AddSingleton<FloorService>();
 builder.Services.AddSingleton<PromotionService>();
 builder.Services.AddSingleton<StoreService>();
 builder.Services.AddSingleton<UserService>();
+builder.Services.AddSingleton<RoutesService>();
+builder.Services.AddSingleton<LocationService>();
+builder.Services.AddSingleton<UserRouteService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

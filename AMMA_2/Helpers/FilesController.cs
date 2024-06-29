@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.StaticFiles;
 
 namespace AMMAAPI.Helpers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class FilesController : ControllerBase

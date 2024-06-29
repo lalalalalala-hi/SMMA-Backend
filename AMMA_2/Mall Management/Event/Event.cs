@@ -16,7 +16,7 @@ namespace AMMAAPI.Models
 
         public string Description { get; set; }
 
-        public string Location { get; set; }
+        public string LocationId { get; set; }
 
         public string StartDate { get; set; }
 
