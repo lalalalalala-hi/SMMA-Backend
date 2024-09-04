@@ -1,4 +1,4 @@
-﻿namespace AMMAAPI.Models
+﻿/*namespace AMMAAPI.Models
 {
     public class Login
     {
@@ -8,3 +8,4 @@
         public string Role { get; set; }
     }
 }
+*/

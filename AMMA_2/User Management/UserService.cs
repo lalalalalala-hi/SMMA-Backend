@@ -72,10 +72,10 @@ namespace AMMAAPI.Services
         public string CheckPasswordStrength(string password)
         {
             StringBuilder sb = new StringBuilder();
-            if (password.Length < 8)
-                sb.Append("Password must be at least 8 characters long" + Environment.NewLine);
-            if (!password.Any(char.IsUpper))
-                sb.Append("Password must contain at least one uppercase letter" + Environment.NewLine);
+            if (password.Length < 6)
+                sb.Append("Password must be at least 6 characters long" + Environment.NewLine);
+            if (password.Length > 10)
+                sb.Append("Password must be no more than 10 characters" + Environment.NewLine);
             if (!password.Any(char.IsLower))
                 sb.Append("Password must contain at least one lowercase letter" + Environment.NewLine);
             if (!password.Any(char.IsDigit))
@@ -85,6 +85,14 @@ namespace AMMAAPI.Services
 
             return sb.ToString();
         }
+
+         public async Task UpdateLastActiveAsync(string userId)
+    {
+        var filter = Builders<User>.Filter.Eq(u => u.UserId, userId);
+        var update = Builders<User>.Update.Set(u => u.LastActive, DateTime.UtcNow);
+
+        await _user.UpdateOneAsync(filter, update);
+    }
 
         internal void Remove(Task<User> u)
         {

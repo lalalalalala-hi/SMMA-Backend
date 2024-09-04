@@ -1,4 +1,5 @@
-﻿namespace AMMAAPI.Database
+﻿
+namespace AMMAAPI.Database
 {
     public class CollectionName
     {

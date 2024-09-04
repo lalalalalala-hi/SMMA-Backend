@@ -6,6 +6,7 @@ using MongoDB.Bson;
 
 namespace AMMAAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class PromotionController: ControllerBase

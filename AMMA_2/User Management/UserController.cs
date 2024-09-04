@@ -31,6 +31,8 @@ namespace AMMAAPI.Controllers
 
             user.Token = _authService.CreateJwt(user);
 
+            await _userService.UpdateLastActiveAsync(user.UserId);
+
             return Ok(new
             {
                 User = new
@@ -58,7 +60,9 @@ namespace AMMAAPI.Controllers
             if(!string.IsNullOrEmpty(passMsg))
             {
                 return BadRequest(new { message = passMsg.ToString() });
-            } 
+            }
+
+            u.LastActive = DateTime.UtcNow;
 
             await _userService.CreateAsync(u);
 

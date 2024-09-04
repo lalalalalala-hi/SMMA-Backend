@@ -1,7 +1,6 @@
 using AMMAAPI.Database;
 using AMMAAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
@@ -9,34 +8,41 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// builder.WebHost.UseUrls("https://*");
-
-// Add services to the container.
-builder.Services.Configure<AMMADatabaseSettings>(
-    builder.Configuration.GetSection("AMMADatabase"));
-
-builder.Services.AddAuthentication(x =>
+// Configure services
+builder.Services.Configure<AMMADatabaseSettings>(settings =>
 {
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-/*    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-*/
-}).AddJwtBearer(x =>
-{
-    x.SaveToken = true;
-    x.RequireHttpsMetadata = false;
-    x.TokenValidationParameters = new TokenValidationParameters
+    settings.ConnectionString = Environment.GetEnvironmentVariable("AMMADatabase__ConnectionString");
+    settings.DatabaseName = Environment.GetEnvironmentVariable("AMMADatabase__DatabaseName");
+    settings.CollectionName = new CollectionName
     {
-        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-        ValidAudience = builder.Configuration["JwtSettings:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])),
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        /*ValidateLifetime = true,*/
-        ValidateIssuerSigningKey = true,
-        ClockSkew = TimeSpan.Zero
+        Category = Environment.GetEnvironmentVariable("AMMADatabase__CollectionName__Category"),
+        Event = Environment.GetEnvironmentVariable("AMMADatabase__CollectionName__Event"),
+        Store = Environment.GetEnvironmentVariable("AMMADatabase__CollectionName__Store"),
+        User = Environment.GetEnvironmentVariable("AMMADatabase__CollectionName__User"),
+        Floor = Environment.GetEnvironmentVariable("AMMADatabase__CollectionName__Floor"),
+        Promotion = Environment.GetEnvironmentVariable("AMMADatabase__CollectionName__Promotion"),
+        Routes = Environment.GetEnvironmentVariable("AMMADatabase__CollectionName__Routes"),
+        Location = Environment.GetEnvironmentVariable("AMMADatabase__CollectionName__Location"),
+        UserRoute = Environment.GetEnvironmentVariable("AMMADatabase__CollectionName__UserRoute")
     };
 });
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.SaveToken = true;
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = Environment.GetEnvironmentVariable("JwtSettings__Issuer"),
+            ValidAudience = Environment.GetEnvironmentVariable("JwtSettings__Audience"),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JwtSettings__Key"))),
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
 
 builder.Services.AddAuthorization();
 
@@ -51,15 +57,16 @@ builder.Services.AddSingleton<LocationService>();
 builder.Services.AddSingleton<UserRouteService>();
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-               builder => builder.AllowAnyOrigin()
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder.WithOrigins("https://smma-eight.vercel.app")
                           .AllowAnyMethod()
-                                     .AllowAnyHeader());
+                          .AllowAnyHeader());
 });
 
 builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
@@ -68,24 +75,16 @@ builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
     return new MongoClient(settings.ConnectionString);
 });
 
-/*builder.Services.AddAuthentication();*/
-
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAll");
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication();
-
 app.UseAuthorization();
 
 app.MapControllers();

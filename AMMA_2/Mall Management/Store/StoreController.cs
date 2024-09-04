@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 
 namespace AMMAAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class StoreController: ControllerBase
